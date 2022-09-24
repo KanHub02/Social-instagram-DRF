@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.validators import ASCIIUsernameValidator
@@ -61,6 +64,27 @@ class Followers(models.Model):
 
     def __str__(self):
         return f"{self.user_from.username} followed to {self.user_to.username}"
+
+
+class OnlineUserActivity(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    last_activity = models.DateTimeField()
+
+    @staticmethod
+    def update_user_activity(user):
+        OnlineUserActivity.objects.update_or_create(
+            user=user, defaults={"last_activity": timezone.now()}
+        )
+
+    @staticmethod
+    def get_user_activities(time_delta=timedelta(seconds=60)):
+        starting_time = timezone.now() - time_delta
+        return OnlineUserActivity.objects.filter(
+            last_activity__gte=starting_time
+        ).order_by("-last_activity")
+
+    def __str__(self):
+        return f"{self.user.username} was online last minute"
 
 
 # Create your models here.
