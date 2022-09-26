@@ -1,5 +1,7 @@
+from ast import Is
+from operator import ge
 from .serializers.auth_serializers import UserRegisterSerializer, LoginSerializer
-from .serializers.profile_serializers import ProfileSerializer
+from .serializers.profile_serializers import ProfileSerializer, LastActivitySerializer
 
 from rest_framework import generics
 from rest_framework import views
@@ -13,6 +15,14 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 
 from .models import User
+
+from .permissions import HavePermissionForNotSafeMethods, IsAuthenticated
+
+
+class ProfileListApiView(generics.ListAPIView):
+    serializer_class = LastActivitySerializer
+    queryset = User.objects.all()
+    permission_classes = []
 
 
 class UserRegisterApiView(generics.CreateAPIView):
@@ -50,10 +60,3 @@ class LoginApiView(views.APIView):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-class ProfileViewSet(ModelViewSet):
-    serializer_class = ProfileSerializer
-    queryset = User
-    permission_classes = []
-    authentication_classes = [JWTAuthentication]

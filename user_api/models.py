@@ -28,6 +28,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     about_me = models.CharField(max_length=255, blank=True, null=True)
     bio = models.CharField(max_length=255, blank=True, null=True)
+    followers = models.ManyToManyField(
+        "self", through="Followers", related_name="follow_to", symmetrical=False
+    )
     phone_number = models.CharField(
         validators=[phone_regex], unique=True, blank=True, null=True, max_length=12
     )
@@ -42,10 +45,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Followers(models.Model):
     user_to = models.ForeignKey(
-        User, related_name="follows", on_delete=models.CASCADE, verbose_name="To"
+        User, related_name="to", on_delete=models.CASCADE, verbose_name="To"
     )
     user_from = models.ForeignKey(
-        User, related_name="followers", on_delete=models.CASCADE, verbose_name="By"
+        User, related_name="by", on_delete=models.CASCADE, verbose_name="By"
     )
     created_at = models.DateTimeField(
         auto_now_add=True, db_index=True, verbose_name="Создано"

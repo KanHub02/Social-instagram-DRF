@@ -12,10 +12,12 @@ class IsAuthenticated(BasePermission):
 
 
 class HavePermissionForNotSafeMethods(BasePermission):
-    message = "User cant permission for change data"
+    message = "User has not permission for change data"
 
     def has_object_permission(self, request, view, obj):
-        if request.method not in SAFE_METHODS and request.user != obj:
+        if (
+            request.method not in SAFE_METHODS
+            and request.user != obj
+            and not request.user.is_authenticated
+        ):
             return False
-        else:
-            return True
