@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Followers
+from ..models import User, Followers
 from rest_framework import status
 
 
@@ -15,7 +15,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs["password2"] != attrs["password"]:
-            raise ValueError("Password did not match!")
+            raise serializers.ValidationError("Passwords didn't match!")
+
+        if attrs["email"] in User.objects.all():
+            raise serializers.ValidationError("Email is exist")
 
     def create(self, validated_data):
         return User.objects.create_user(
