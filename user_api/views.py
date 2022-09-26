@@ -1,7 +1,10 @@
 from .serializers.auth_serializers import UserRegisterSerializer, LoginSerializer
+from .serializers.profile_serializers import ProfileSerializer
+
 from rest_framework import generics
 from rest_framework import views
 from rest_framework import status
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
 from django.contrib.auth import authenticate
@@ -47,3 +50,10 @@ class LoginApiView(views.APIView):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProfileViewSet(ModelViewSet):
+    serializer_class = ProfileSerializer
+    queryset = User
+    permission_classes = []
+    authentication_classes = [JWTAuthentication]

@@ -22,7 +22,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Profile fields
 
     user_avatar = models.ImageField(
-        default="media/default_avatar/avatar.png",
+        default="media/default_avatar.png",
         upload_to="media/uploaded_media/",
         blank=True,
     )
@@ -42,10 +42,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Followers(models.Model):
     user_to = models.ForeignKey(
-        User, related_name="to_set", on_delete=models.CASCADE, verbose_name="To"
+        User, related_name="follows", on_delete=models.CASCADE, verbose_name="To"
     )
     user_from = models.ForeignKey(
-        User, related_name="from_set", on_delete=models.CASCADE, verbose_name="By"
+        User, related_name="followers", on_delete=models.CASCADE, verbose_name="By"
     )
     created_at = models.DateTimeField(
         auto_now_add=True, db_index=True, verbose_name="Создано"
@@ -77,14 +77,14 @@ class OnlineUserActivity(models.Model):
         )
 
     @staticmethod
-    def get_user_activities(time_delta=timedelta(seconds=60)):
+    def get_user_activities(time_delta=timedelta(minutes=15)):
         starting_time = timezone.now() - time_delta
         return OnlineUserActivity.objects.filter(
             last_activity__gte=starting_time
         ).order_by("-last_activity")
 
     def __str__(self):
-        return f"{self.user.username} was online last minute"
+        return f"{self.user.username} was online per {self.last_activity}"
 
 
 # Create your models here.
