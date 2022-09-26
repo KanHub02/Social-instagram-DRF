@@ -1,7 +1,7 @@
 from ast import Is
 from operator import ge
 from .serializers.auth_serializers import UserRegisterSerializer, LoginSerializer
-from .serializers.profile_serializers import ProfileSerializer
+from .serializers.profile_serializers import ProfileSerializer, FollowSerializer
 
 from rest_framework import generics
 from rest_framework import views
@@ -60,3 +60,18 @@ class LoginApiView(views.APIView):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class GoFollowView(generics.CreateAPIView):
+    serializer_class = FollowSerializer
+    permission_classes = []
+
+    def post(self, request, pk):
+        data = User.objects.get(pk=pk)
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save(data=data, user_by=self.request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

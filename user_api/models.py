@@ -10,7 +10,30 @@ from django.contrib.auth.validators import ASCIIUsernameValidator
 from .validators import phone_regex
 from .managers import UserManager
 
+from social_net.settings import AUTH_USER_MODEL
+
 username_validator = ASCIIUsernameValidator()
+
+
+class OnlineUserActivity(models.Model):
+    user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
+    last_activity = models.DateTimeField()
+
+    @staticmethod
+    def update_user_activity(user):
+        OnlineUserActivity.objects.update_or_create(
+            user=user, defaults={"last_activity": timezone.now()}
+        )
+
+    @staticmethod
+    def get_user_activities(time_delta=timedelta(minutes=15)):
+        starting_time = timezone.now() - time_delta
+        return OnlineUserActivity.objects.filter(
+            last_activity__gte=starting_time
+        ).order_by("-last_activity")
+
+    def __str__(self):
+        return f"{self.user.username} was online per {self.last_activity}"
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -21,6 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_private = models.BooleanField(default=False)
 
     # Profile fields
 
@@ -67,27 +91,6 @@ class User(AbstractBaseUser, PermissionsMixin):
                 name="User cant follow to self",
             ),
         ]
-
-
-class OnlineUserActivity(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    last_activity = models.DateTimeField()
-
-    @staticmethod
-    def update_user_activity(user):
-        OnlineUserActivity.objects.update_or_create(
-            user=user, defaults={"last_activity": timezone.now()}
-        )
-
-    @staticmethod
-    def get_user_activities(time_delta=timedelta(minutes=15)):
-        starting_time = timezone.now() - time_delta
-        return OnlineUserActivity.objects.filter(
-            last_activity__gte=starting_time
-        ).order_by("-last_activity")
-
-    def __str__(self):
-        return f"{self.user.username} was online per {self.last_activity}"
 
 
 # Create your models here.

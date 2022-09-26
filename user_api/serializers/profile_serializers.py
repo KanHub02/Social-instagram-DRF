@@ -1,6 +1,18 @@
+from email.policy import default
 from ..validators import phone_regex
 from rest_framework import serializers
-from ..models import User
+from ..models import User, OnlineUserActivity
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    user_by = serializers.CharField(
+        max_length=255, read_only=True, default=serializers.CurrentUserDefault
+    )
+    user_to = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ["user_by", "user_to"]
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -29,6 +41,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "phone_number",
             "followers_count",
             "follows_count",
+            "last_activity",
         ]
 
     def get_followers_count(self, obj):
