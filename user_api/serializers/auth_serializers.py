@@ -11,14 +11,13 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["username", "email", "password"]
+        fields = ["username", "email", "password", "password2"]
 
     def validate(self, attrs):
         if attrs["password2"] != attrs["password"]:
             raise serializers.ValidationError("Passwords didn't match!")
 
-        if attrs["email"] in User.objects.all():
-            raise serializers.ValidationError("Email is exist")
+        return attrs
 
     def create(self, validated_data):
         return User.objects.create_user(
