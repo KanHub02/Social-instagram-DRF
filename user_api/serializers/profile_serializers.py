@@ -1,20 +1,6 @@
 from ..validators import phone_regex
 from rest_framework import serializers
-from ..models import User, Followers, OnlineUserActivity
-
-
-class LastActivitySerializer(serializers.ModelSerializer):
-    last_activity = serializers.TimeField()
-
-    class Meta:
-        model = OnlineUserActivity
-        fields = "__all__"
-
-    def to_representation(self, instance):
-        super().to_representation(instance)
-        data = OnlineUserActivity.objects.all()
-        data["last_activity"]
-        return data
+from ..models import User, Followers
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -28,7 +14,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     followers_count = serializers.SerializerMethodField(
         method_name="get_followers_count", read_only=True
     )
-    last_activity = LastActivitySerializer(read_only=True)
 
     class Meta:
         model = User
@@ -40,7 +25,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             "bio",
             "phone_number",
             "followers_count",
-            "last_activity",
         ]
 
     def get_followers_count(self, obj):

@@ -1,7 +1,7 @@
 from ast import Is
 from operator import ge
 from .serializers.auth_serializers import UserRegisterSerializer, LoginSerializer
-from .serializers.profile_serializers import ProfileSerializer, LastActivitySerializer
+from .serializers.profile_serializers import ProfileSerializer
 
 from rest_framework import generics
 from rest_framework import views
@@ -20,7 +20,7 @@ from .permissions import HavePermissionForNotSafeMethods, IsAuthenticated
 
 
 class ProfileListApiView(generics.ListAPIView):
-    serializer_class = LastActivitySerializer
+    serializer_class = ProfileSerializer
     queryset = User.objects.all()
     permission_classes = []
 

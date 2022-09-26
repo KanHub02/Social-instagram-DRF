@@ -33,6 +33,7 @@ AUTH_USER_MODEL = "user_api.User"
 APPS = ["user_api", "media_api"]
 
 INSTALLED_APPS = [
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
