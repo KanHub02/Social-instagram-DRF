@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import User, Followers
+from ..models import User
 from rest_framework import status
 
 

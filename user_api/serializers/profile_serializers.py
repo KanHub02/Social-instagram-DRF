@@ -1,6 +1,6 @@
 from ..validators import phone_regex
 from rest_framework import serializers
-from ..models import User, Followers
+from ..models import User
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -14,6 +14,9 @@ class ProfileSerializer(serializers.ModelSerializer):
     followers_count = serializers.SerializerMethodField(
         method_name="get_followers_count", read_only=True
     )
+    follows_count = serializers.SerializerMethodField(
+        method_name="get_follows_count", read_only=True
+    )
 
     class Meta:
         model = User
@@ -25,8 +28,13 @@ class ProfileSerializer(serializers.ModelSerializer):
             "bio",
             "phone_number",
             "followers_count",
+            "follows_count",
         ]
 
     def get_followers_count(self, obj):
         if obj:
-            return User.objects.filter(followers=obj).count()
+            return User.objects.filter(user_from=obj).count()
+
+    def get_follows_count(self, obj):
+        if obj:
+            return User.objects.filter(user_to=obj).count()

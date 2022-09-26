@@ -1,4 +1,7 @@
 from datetime import timedelta
+from doctest import FAIL_FAST
+from pyexpat import model
+from statistics import mode
 
 from django.utils import timezone
 from django.db import models
@@ -21,6 +24,23 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # Profile fields
 
+    user_to = models.ForeignKey(
+        "self",
+        related_name="to",
+        on_delete=models.CASCADE,
+        verbose_name="To",
+        null=True,
+        blank=True,
+    )
+    user_from = models.ForeignKey(
+        "self",
+        related_name="by",
+        on_delete=models.CASCADE,
+        verbose_name="By",
+        null=True,
+        blank=True,
+    )
+
     user_avatar = models.ImageField(
         default="media/default_avatar.png",
         upload_to="media/uploaded_media/",
@@ -28,12 +48,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     about_me = models.CharField(max_length=255, blank=True, null=True)
     bio = models.CharField(max_length=255, blank=True, null=True)
-    followers = models.ManyToManyField(
-        "self", through="Followers", related_name="follow_to", symmetrical=False
-    )
     phone_number = models.CharField(
         validators=[phone_regex], unique=True, blank=True, null=True, max_length=12
     )
+
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["email"]
 
@@ -42,31 +60,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
-
-class Followers(models.Model):
-    user_to = models.ForeignKey(
-        User, related_name="to", on_delete=models.CASCADE, verbose_name="To"
-    )
-    user_from = models.ForeignKey(
-        User, related_name="by", on_delete=models.CASCADE, verbose_name="By"
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True, db_index=True, verbose_name="Создано"
-    )
-
     class Meta:
-        ordering = ("-created_at",)
-        verbose_name = "Followers"
-        verbose_name_plural = "Followers"
         constraints = [
             models.CheckConstraint(
                 check=~models.Q(user_from=models.F("user_to")),
-                name="check_self_follow",
-            )
+                name="User cant follow to self",
+            ),
         ]
-
-    def __str__(self):
-        return f"{self.user_from.username} followed to {self.user_to.username}"
 
 
 class OnlineUserActivity(models.Model):
