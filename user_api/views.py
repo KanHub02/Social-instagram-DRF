@@ -14,16 +14,19 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework.permissions import IsAuthenticated
 
 from .models import User
 
-from .permissions import HavePermissionForNotSafeMethods, IsAuthenticated
+from .permissions import UserProfilePermission
 
 
 class ProfileViewSet(ReadOnlyModelViewSet):
     serializer_class = ProfileSerializer
     queryset = User.objects.all()
-    permission_classes = []
+    permission_classes = [
+        IsAuthenticated,
+    ]
     authentication_classes = [
         JWTAuthentication,
     ]
@@ -32,7 +35,7 @@ class ProfileViewSet(ReadOnlyModelViewSet):
 class ProfileUpdateApiView(generics.UpdateAPIView):
     serializer_class = ProfileSerializer
     queryset = User.objects.all()
-    permission_classes = []
+    permission_classes = [UserProfilePermission]
     authentication_classes = [JWTAuthentication]
 
 
