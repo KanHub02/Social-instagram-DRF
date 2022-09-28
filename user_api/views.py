@@ -29,6 +29,13 @@ class ProfileViewSet(ReadOnlyModelViewSet):
     ]
 
 
+class ProfileUpdateApiView(generics.UpdateAPIView):
+    serializer_class = ProfileSerializer
+    queryset = User.objects.all()
+    permission_classes = []
+    authentication_classes = [JWTAuthentication]
+
+
 class UserRegisterApiView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegisterSerializer
