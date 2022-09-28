@@ -9,3 +9,10 @@ class UserProfilePermission(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.user.is_authenticated and request.user == obj:
             return True
+
+
+class IsAnonymous(BasePermission):
+    """Allows the request only to unauthorized users"""
+
+    def has_permission(self, request, view):
+        return not request.user.is_authenticated

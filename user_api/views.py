@@ -10,7 +10,6 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 
 from django.contrib.auth import authenticate
-from django.shortcuts import get_object_or_404
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
@@ -18,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import User
 
-from .permissions import UserProfilePermission
+from .permissions import UserProfilePermission, IsAnonymous
 
 
 class ProfileViewSet(ReadOnlyModelViewSet):
@@ -42,10 +41,14 @@ class ProfileUpdateApiView(generics.UpdateAPIView):
 class UserRegisterApiView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegisterSerializer
-    permission_classes = []
+    permission_classes = [
+        IsAnonymous,
+    ]
 
 
 class LoginAPIView(views.APIView):
+    permission_classes = [IsAnonymous]
+
     def post(self, request):
         try:
             data = request.data
