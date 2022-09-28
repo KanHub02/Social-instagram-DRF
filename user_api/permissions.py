@@ -21,3 +21,11 @@ class HavePermissionForNotSafeMethods(BasePermission):
             and not request.user.is_authenticated
         ):
             return False
+
+
+class IsTrueUser(BasePermission):
+    message = "User incorrect"
+
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_autheticated and request.method in SAFE_METHODS:
+            return True

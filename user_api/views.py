@@ -1,7 +1,7 @@
 from ast import Is
 from operator import ge
 from .serializers.auth_serializers import UserRegisterSerializer, LoginSerializer
-from .serializers.profile_serializers import ProfileSerializer, FollowSerializer
+from .serializers.profile_serializers import ProfileSerializer
 
 from rest_framework import generics
 from rest_framework import views
@@ -10,6 +10,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
 from django.contrib.auth import authenticate
+from django.shortcuts import get_object_or_404
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
@@ -19,10 +20,26 @@ from .models import User
 from .permissions import HavePermissionForNotSafeMethods, IsAuthenticated
 
 
-class ProfileListApiView(generics.ListAPIView):
+class ProfileGetListApiView(generics.ListAPIView):
     serializer_class = ProfileSerializer
     queryset = User.objects.all()
     permission_classes = []
+    authentication_classes = [JWTAuthentication,]
+
+
+class ProfileGetView(views.APIView):
+    serializer_class = ProfileSerializer
+    queryset = User.objects.all()
+    permission_classes = []
+    authentication_classes = [JWTAuthentication,]
+
+    def get(self, request, pk):
+        profile = User.objects.get(id=pk)
+        data = self.serializer_class(profile, many=True)
+        return Response(data, status=status.HTTP_200_OK).data
+
+        
+
 
 
 class UserRegisterApiView(generics.CreateAPIView):
@@ -31,7 +48,9 @@ class UserRegisterApiView(generics.CreateAPIView):
     permission_classes = []
 
 
-class LoginApiView(views.APIView):
+class LoginAPIView(views.APIView):
+
+
     def post(self, request):
         try:
             data = request.data
@@ -62,16 +81,3 @@ class LoginApiView(views.APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class GoFollowView(generics.CreateAPIView):
-    serializer_class = FollowSerializer
-    permission_classes = []
-
-    def post(self, request, pk):
-        data = User.objects.get(pk=pk)
-        serializer = self.serializer_class(data=request.data)
-
-        if serializer.is_valid():
-            serializer.save(data=data, user_by=self.request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

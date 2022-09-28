@@ -2,6 +2,8 @@ from django.utils.deprecation import MiddlewareMixin
 
 from .models import OnlineUserActivity
 
+from django.http import HttpResponse
+
 
 class OnlineNowMiddleware(MiddlewareMixin):
     """Updates the OnlineUserActivity database whenever an authenticated user makes an HTTP request."""
@@ -13,3 +15,4 @@ class OnlineNowMiddleware(MiddlewareMixin):
             return
 
         OnlineUserActivity.update_user_activity(user)
+        

@@ -1,3 +1,4 @@
+from curses.ascii import US
 from datetime import timedelta
 from doctest import FAIL_FAST
 from pyexpat import model
@@ -47,23 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_private = models.BooleanField(default=False)
 
     # Profile fields
-
-    user_to = models.ForeignKey(
-        "self",
-        related_name="to",
-        on_delete=models.CASCADE,
-        verbose_name="To",
-        null=True,
-        blank=True,
-    )
-    user_from = models.ForeignKey(
-        "self",
-        related_name="by",
-        on_delete=models.CASCADE,
-        verbose_name="By",
-        null=True,
-        blank=True,
-    )
+    follows = models.ManyToManyField('self', through='FollowerSystem', related_name='following', symmetrical=False)
 
     user_avatar = models.ImageField(
         default="media/default_avatar.png",
@@ -84,12 +69,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
+
+class FollowerSystem(models.Model):
+    user_to = models.ForeignKey(User,related_name='to_set',on_delete=models.CASCADE,verbose_name='To')
+    user_from = models.ForeignKey(User,related_name='from_set',on_delete=models.CASCADE,verbose_name='By')
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True,verbose_name='Created')
+
+    def __str__(self) -> str:
+        return f'{self.user_from} follow to {self.user_to}'
+
     class Meta:
+        ordering = ('-created_at',)
+        verbose_name = 'Follower'
+        verbose_name_plural = 'Followers'
         constraints = [
             models.CheckConstraint(
-                check=~models.Q(user_from=models.F("user_to")),
-                name="User cant follow to self",
-            ),
+                check =~ models.Q(user_from=models.F("user_to")), # Prohibits subscribing to yourself
+                name = 'User cant follow to self',
+            )
         ]
 
 
