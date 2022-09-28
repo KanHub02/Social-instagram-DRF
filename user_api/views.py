@@ -6,7 +6,7 @@ from .serializers.profile_serializers import ProfileSerializer
 from rest_framework import generics
 from rest_framework import views
 from rest_framework import status
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 
 from django.contrib.auth import authenticate
@@ -20,26 +20,13 @@ from .models import User
 from .permissions import HavePermissionForNotSafeMethods, IsAuthenticated
 
 
-class ProfileGetListApiView(generics.ListAPIView):
+class ProfileViewSet(ReadOnlyModelViewSet):
     serializer_class = ProfileSerializer
     queryset = User.objects.all()
     permission_classes = []
-    authentication_classes = [JWTAuthentication,]
-
-
-class ProfileGetView(views.APIView):
-    serializer_class = ProfileSerializer
-    queryset = User.objects.all()
-    permission_classes = []
-    authentication_classes = [JWTAuthentication,]
-
-    def get(self, request, pk):
-        profile = User.objects.get(id=pk)
-        data = self.serializer_class(profile, many=True)
-        return Response(data, status=status.HTTP_200_OK).data
-
-        
-
+    authentication_classes = [
+        JWTAuthentication,
+    ]
 
 
 class UserRegisterApiView(generics.CreateAPIView):
@@ -49,8 +36,6 @@ class UserRegisterApiView(generics.CreateAPIView):
 
 
 class LoginAPIView(views.APIView):
-
-
     def post(self, request):
         try:
             data = request.data
@@ -79,5 +64,3 @@ class LoginAPIView(views.APIView):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-

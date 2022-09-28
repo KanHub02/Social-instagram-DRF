@@ -15,4 +15,3 @@ class OnlineNowMiddleware(MiddlewareMixin):
             return
 
         OnlineUserActivity.update_user_activity(user)
-        

@@ -13,70 +13,180 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
+        ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('username', models.CharField(max_length=35, unique=True, validators=[django.contrib.auth.validators.ASCIIUsernameValidator()])),
-                ('email', models.EmailField(max_length=255, unique=True)),
-                ('is_superuser', models.BooleanField(default=False)),
-                ('is_staff', models.BooleanField(default=False)),
-                ('is_active', models.BooleanField(default=True)),
-                ('is_private', models.BooleanField(default=False)),
-                ('user_avatar', models.ImageField(blank=True, default='media/default_avatar.png', upload_to='media/uploaded_media/')),
-                ('about_me', models.CharField(blank=True, max_length=255, null=True)),
-                ('bio', models.CharField(blank=True, max_length=255, null=True)),
-                ('phone_number', models.CharField(blank=True, max_length=12, null=True, unique=True, validators=[django.core.validators.RegexValidator(message="The client's phone number in the format 996XXXXXXXXX", regex='^996\\d{9}$')])),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "username",
+                    models.CharField(
+                        max_length=35,
+                        unique=True,
+                        validators=[
+                            django.contrib.auth.validators.ASCIIUsernameValidator()
+                        ],
+                    ),
+                ),
+                ("email", models.EmailField(max_length=255, unique=True)),
+                ("is_superuser", models.BooleanField(default=False)),
+                ("is_staff", models.BooleanField(default=False)),
+                ("is_active", models.BooleanField(default=True)),
+                ("is_private", models.BooleanField(default=False)),
+                (
+                    "user_avatar",
+                    models.ImageField(
+                        blank=True,
+                        default="media/default_avatar.png",
+                        upload_to="media/uploaded_media/",
+                    ),
+                ),
+                ("about_me", models.CharField(blank=True, max_length=255, null=True)),
+                ("bio", models.CharField(blank=True, max_length=255, null=True)),
+                (
+                    "phone_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=12,
+                        null=True,
+                        unique=True,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="The client's phone number in the format 996XXXXXXXXX",
+                                regex="^996\\d{9}$",
+                            )
+                        ],
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='OnlineUserActivity',
+            name="OnlineUserActivity",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('last_activity', models.DateTimeField()),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("last_activity", models.DateTimeField()),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='FollowerSystem',
+            name="FollowerSystem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Created')),
-                ('user_from', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='from_set', to=settings.AUTH_USER_MODEL, verbose_name='By')),
-                ('user_to', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='to_set', to=settings.AUTH_USER_MODEL, verbose_name='To')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, db_index=True, verbose_name="Created"
+                    ),
+                ),
+                (
+                    "user_from",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="from_set",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="By",
+                    ),
+                ),
+                (
+                    "user_to",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="to_set",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="To",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Follower',
-                'verbose_name_plural': 'Followers',
-                'ordering': ('-created_at',),
+                "verbose_name": "Follower",
+                "verbose_name_plural": "Followers",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.AddField(
-            model_name='user',
-            name='followers',
-            field=models.ManyToManyField(related_name='following', through='user_api.FollowerSystem', to=settings.AUTH_USER_MODEL),
+            model_name="user",
+            name="followers",
+            field=models.ManyToManyField(
+                related_name="following",
+                through="user_api.FollowerSystem",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='user',
-            name='groups',
-            field=models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups'),
+            model_name="user",
+            name="groups",
+            field=models.ManyToManyField(
+                blank=True,
+                help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                related_name="user_set",
+                related_query_name="user",
+                to="auth.group",
+                verbose_name="groups",
+            ),
         ),
         migrations.AddField(
-            model_name='user',
-            name='user_permissions',
-            field=models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.permission', verbose_name='user permissions'),
+            model_name="user",
+            name="user_permissions",
+            field=models.ManyToManyField(
+                blank=True,
+                help_text="Specific permissions for this user.",
+                related_name="user_set",
+                related_query_name="user",
+                to="auth.permission",
+                verbose_name="user permissions",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='followersystem',
-            constraint=models.CheckConstraint(check=models.Q(('user_from', django.db.models.expressions.F('user_to')), _negated=True), name='User cant follow to self'),
+            model_name="followersystem",
+            constraint=models.CheckConstraint(
+                check=models.Q(
+                    ("user_from", django.db.models.expressions.F("user_to")),
+                    _negated=True,
+                ),
+                name="User cant follow to self",
+            ),
         ),
     ]

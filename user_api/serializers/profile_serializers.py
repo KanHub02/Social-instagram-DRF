@@ -12,8 +12,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     bio = serializers.CharField(max_length=255, required=False)
     about_me = serializers.CharField(max_length=255, required=False)
     phone_number = serializers.CharField(
-        max_length=12, validators=[phone_regex],
-        required=False
+        max_length=12, validators=[phone_regex], required=False
     )
     follows_count = serializers.SerializerMethodField(
         method_name="get_follows_count", read_only=True
@@ -34,11 +33,11 @@ class ProfileSerializer(serializers.ModelSerializer):
             "phone_number",
             "follows_count",
             "followers_count",
-            "last_online"
+            "last_online",
         ]
 
     def get_follows_count(self, obj):
         return FollowerSystem.objects.filter(user_to=obj).count()
-        
+
     def get_followers_count(self, obj):
         return FollowerSystem.objects.filter(user_from=obj).count()
