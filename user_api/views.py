@@ -35,19 +35,10 @@ from .permissions import (
 
 class UnFollowView(generics.DestroyAPIView):
     serializer_class = FollowerSystem
-    queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    def delete(self, request, pk):
-        user = get_object_or_404(User, pk=pk)
-        serializer = self.serializer_class(data=request.data)
 
-        if serializer.is_valid():
-            serializer.delete(user_from=request.user, user_to=user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetToFollowView(views.APIView):

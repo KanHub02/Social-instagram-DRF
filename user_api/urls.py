@@ -11,6 +11,7 @@ from .views import (
     GetAllFollows,
     GetAllFollowers,
     GetToFollowView,
+    UnFollowView,
 )
 
 ROUTER = DefaultRouter()
@@ -38,4 +39,5 @@ urlpatterns = [
     ),
     path("profile/<pk>/follows/", GetAllFollows.as_view(), name="user_all_follows_api"),
     path("profile/follow-to/<pk>/", GetToFollowView.as_view(), name="user_follow_api"),
+    path("profile/unfollow-from/<pk>/", UnFollowView.as_view(), )
 ]
