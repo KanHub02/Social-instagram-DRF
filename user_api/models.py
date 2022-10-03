@@ -1,6 +1,7 @@
 from curses.ascii import US
 from datetime import timedelta
 from doctest import FAIL_FAST
+from enum import unique
 from pyexpat import model
 from statistics import mode
 
@@ -46,6 +47,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_private = models.BooleanField(default=False)
+    last_activity = models.OneToOneField(
+        OnlineUserActivity,
+        null=True,
+        related_name="last_online",
+        on_delete=models.CASCADE,
+    )
 
     # Profile fields
     follows = models.ManyToManyField(
@@ -74,10 +81,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class FollowerSystem(models.Model):
     user_to = models.ForeignKey(
-        User, related_name="to_set", on_delete=models.CASCADE, verbose_name="To"
+        User,
+        related_name="to_set",
+        on_delete=models.CASCADE,
+        verbose_name="To",
     )
     user_from = models.ForeignKey(
-        User, related_name="from_set", on_delete=models.CASCADE, verbose_name="By"
+        User,
+        related_name="from_set",
+        on_delete=models.CASCADE,
+        verbose_name="By",
     )
     created_at = models.DateTimeField(
         auto_now_add=True, db_index=True, verbose_name="Created"
