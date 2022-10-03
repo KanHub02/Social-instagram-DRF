@@ -10,7 +10,8 @@ from rest_framework import status
 
 class FollowerSystemSerializer(serializers.ModelSerializer):
     user_from = serializers.CurrentUserDefault
-    user_to  = serializers.PrimaryKeyRelatedField(read_only=True)
+    user_to = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = FollowerSystem
         fields = ["user_to"]
@@ -28,9 +29,6 @@ class UserActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = OnlineUserActivity
         fields = ["last_activity"]
-
-
-
 
 
 class ProfileSerializer(serializers.ModelSerializer):

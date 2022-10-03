@@ -8,7 +8,7 @@ from .serializers.profile_serializers import (
     PrivateStatusSerializer,
     GetAllFollowersSerializer,
     GetAllFollowsSerializer,
-    FollowerSystemSerializer
+    FollowerSystemSerializer,
 )
 
 from rest_framework import generics
@@ -33,7 +33,6 @@ from .permissions import (
 )
 
 
-
 class UnFollowView(generics.DestroyAPIView):
     serializer_class = FollowerSystem
     queryset = User.objects.all()
@@ -49,8 +48,6 @@ class UnFollowView(generics.DestroyAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        
 
 
 class GetToFollowView(views.APIView):

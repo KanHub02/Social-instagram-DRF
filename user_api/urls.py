@@ -37,6 +37,5 @@ urlpatterns = [
         name="user_all_followers_api",
     ),
     path("profile/<pk>/follows/", GetAllFollows.as_view(), name="user_all_follows_api"),
-    path("profile/follow-to/<pk>/", GetToFollowView.as_view(), name="user_follow_api")
+    path("profile/follow-to/<pk>/", GetToFollowView.as_view(), name="user_follow_api"),
 ]
-
