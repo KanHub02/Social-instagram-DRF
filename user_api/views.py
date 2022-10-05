@@ -1,4 +1,5 @@
 from ast import Is
+from dataclasses import dataclass
 from operator import ge
 
 from requests import delete
@@ -9,6 +10,7 @@ from .serializers.profile_serializers import (
     GetAllFollowersSerializer,
     GetAllFollowsSerializer,
     FollowerSystemSerializer,
+    UnFollowByCurrentUserSerializer,
 )
 
 from rest_framework import generics
@@ -33,12 +35,21 @@ from .permissions import (
 )
 
 
-class UnFollowView(generics.DestroyAPIView):
-    serializer_class = FollowerSystem
+class UnFollowByView(generics.DestroyAPIView):
+    queryset = FollowerSystem.objects.all()
+    serializer_class = UnFollowByCurrentUserSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-
+    def destroy(self, request, pk):
+        user = FollowerSystem.objects.get(user_to_id=pk)
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            self.perform_destroy(user)
+            return Response(
+                status=status.HTTP_204_NO_CONTENT,
+                data="Current user unfollow succesfully",
+            )
 
 
 class GetToFollowView(views.APIView):

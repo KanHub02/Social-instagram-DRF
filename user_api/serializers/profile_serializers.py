@@ -8,7 +8,7 @@ from rest_framework import response
 from rest_framework import status
 
 
-class FollowerSystemSerializer(serializers.ModelSerializer):
+class UnFollowByCurrentUserSerializer(serializers.ModelSerializer):
     user_from = serializers.CurrentUserDefault
     user_to = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -17,12 +17,13 @@ class FollowerSystemSerializer(serializers.ModelSerializer):
         fields = ["user_to"]
 
 
-class GetUserIdSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(read_only=True)
+class FollowerSystemSerializer(serializers.ModelSerializer):
+    user_from = serializers.CurrentUserDefault
+    user_to = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
-        model = User
-        fields = ["id"]
+        model = FollowerSystem
+        fields = ["user_to"]
 
 
 class UserActivitySerializer(serializers.ModelSerializer):
