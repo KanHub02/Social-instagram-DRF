@@ -4,6 +4,7 @@ from doctest import FAIL_FAST
 from enum import unique
 from pyexpat import model
 from statistics import mode
+from tabnanny import verbose
 
 from django.utils import timezone
 from django.db import models
@@ -11,6 +12,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.validators import ASCIIUsernameValidator
 from .validators import phone_regex
 from .managers import UserManager
+
 
 from social_net.settings import AUTH_USER_MODEL
 
@@ -57,6 +59,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Profile fields
     follows = models.ManyToManyField(
         "self", through="FollowerSystem", related_name="following", symmetrical=False
+    )
+
+    saved_post = models.ForeignKey(
+        "media_api.Post",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="saved_posts",
+        verbose_name="Saved",
     )
 
     user_avatar = models.ImageField(

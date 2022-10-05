@@ -7,6 +7,7 @@ from .serializers import PostSerializer, CommentSerializer, LikePostSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.shortcuts import get_object_or_404
+from .permissions import IfPostFromUserPermission
 
 
 # from .pagination import CommentPagination, PostPagination, LikePagination
@@ -15,12 +16,10 @@ from django.shortcuts import get_object_or_404
 class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
-    # permission_classes = [IsOwnerOrReadOnly, IsAuthorHasPrivateAccount]
+    permission_classes = [IfPostFromUserPermission]
     authentication_classes = [
         JWTAuthentication,
     ]
-
-    # pagination_class = PostPagination
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
