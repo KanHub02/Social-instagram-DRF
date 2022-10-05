@@ -2,9 +2,12 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from .views import (
+from views.auth_views import (
     UserRegisterApiView,
     LoginAPIView,
+)
+
+from views.profile_views import (
     ProfileViewSet,
     ProfileUpdateApiView,
     UserSetPrivateStatus,
@@ -13,6 +16,7 @@ from .views import (
     GetToFollowView,
     UnFollowByView,
 )
+
 
 ROUTER = DefaultRouter()
 ROUTER.register(r"profile", ProfileViewSet, "profile")

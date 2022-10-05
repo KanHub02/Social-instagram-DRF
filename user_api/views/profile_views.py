@@ -1,10 +1,4 @@
-from ast import Is
-from dataclasses import dataclass
-from operator import ge
-
-from requests import delete
-from .serializers.auth_serializers import UserRegisterSerializer, LoginSerializer
-from .serializers.profile_serializers import (
+from ..serializers.profile_serializers import (
     ProfileSerializer,
     PrivateStatusSerializer,
     GetAllFollowersSerializer,
@@ -16,26 +10,24 @@ from .serializers.profile_serializers import (
 from rest_framework import generics
 from rest_framework import views
 from rest_framework import status
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.response import Response
 
-from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework.permissions import IsAuthenticated
 
-from .models import FollowerSystem, User
+from ..models import FollowerSystem, User
 
-from .permissions import (
+from ..permissions import (
     UserProfilePermission,
-    IsAnonymous,
     CustomAuthenticatedPermission,
 )
 
 
 class UnFollowByView(generics.DestroyAPIView):
+
     queryset = FollowerSystem.objects.all()
     serializer_class = UnFollowByCurrentUserSerializer
     permission_classes = [IsAuthenticated]
@@ -109,47 +101,6 @@ class ProfileUpdateApiView(generics.UpdateAPIView):
     queryset = User.objects.all()
     permission_classes = [UserProfilePermission]
     authentication_classes = [JWTAuthentication]
-
-
-class UserRegisterApiView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserRegisterSerializer
-    permission_classes = [
-        IsAnonymous,
-    ]
-
-
-class LoginAPIView(views.APIView):
-    permission_classes = [IsAnonymous]
-
-    def post(self, request):
-        try:
-            data = request.data
-            serializer = LoginSerializer(data=data)
-            if serializer.is_valid():
-                username = serializer.data["username"]
-                password = serializer.data["password"]
-                user = authenticate(username=username, password=password)
-                if user is None:
-                    data = "User not found"
-                    return Response(
-                        status=status.HTTP_400_BAD_REQUEST, data={"status": data}
-                    )
-
-                refresh = RefreshToken.for_user(user)
-                access = AccessToken.for_user(user)
-
-                return Response(
-                    {
-                        "status": status.HTTP_200_OK,
-                        "user": user.username,
-                        "refresh": str(refresh),
-                        "access": str(access),
-                    }
-                )
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserSetPrivateStatus(generics.UpdateAPIView):
