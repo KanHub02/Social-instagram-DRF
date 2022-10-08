@@ -31,7 +31,10 @@ ALLOWED_HOSTS = []
 AUTH_USER_MODEL = "user_api.User"
 
 # Application definition
-APPS = ["user_api", "media_api"]
+
+
+APPS = ["user_api", "media_api", "custom_commands"]
+
 
 INSTALLED_APPS = [
     "jazzmin",
@@ -163,4 +166,38 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
+}
+
+JAZZMIN_SETTINGS = {
+    "site_title": "InstaSocial",
+    "site_header": "instasocialnet",
+    "site_brand": "instagram",
+    "site_icon": "images/favicon.png",
+    "site_logo": None,
+    "welcome_sign": "Welcome to insta backend on DRF",
+    "copyright": "InstaSocial",
+    "user_avatar": None,
+    "topmenu_links": [
+        {"name": "insta", "url": "home", "permissions": ["auth.view_user"]},
+        {"model": "auth.User"},
+    ],
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "users.User": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "admin.LogEntry": "fas fa-file",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-arrow-circle-right",
+    "related_modal_active": False,
+    "custom_js": None,
+    "show_ui_builder": False,
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {
+        "auth.user": "collapsible",
+        "auth.group": "vertical_tabs",
+    },
 }

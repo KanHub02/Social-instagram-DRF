@@ -31,7 +31,9 @@ class UnFollowByView(generics.DestroyAPIView):
 
     queryset = FollowerSystem.objects.all()
     serializer_class = UnFollowByCurrentUserSerializer
-    permission_classes = [UserProfilePermission,]
+    permission_classes = [
+        UserProfilePermission,
+    ]
     authentication_classes = [JWTAuthentication]
 
     def destroy(self, request, pk):
@@ -47,7 +49,9 @@ class UnFollowByView(generics.DestroyAPIView):
 
 class GetToFollowView(views.APIView):
     serializer_class = FollowerSystemSerializer
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [
+        IsAuthenticated,
+    ]
     authentication_classes = [
         JWTAuthentication,
     ]
@@ -65,7 +69,9 @@ class GetToFollowView(views.APIView):
 
 class GetAllFollows(generics.ListAPIView):
     serializer_class = GetAllFollowsSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [
+        IsAuthenticated,
+    ]
 
     # pagination_classes = CommentPagination
 
@@ -80,7 +86,9 @@ class GetAllFollows(generics.ListAPIView):
 
 class GetAllFollowers(generics.ListAPIView):
     serializer_class = GetAllFollowersSerializer
-    [IsAuthenticated, ]
+    [
+        IsAuthenticated,
+    ]
 
     def get(self, request, pk):
         post = get_object_or_404(User, pk=pk)

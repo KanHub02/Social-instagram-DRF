@@ -15,9 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from .swagger import urlpatterns as swagger_url
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", include("user_api.urls")),
     path("api/v1/", include("media_api.urls")),
+    path("api/v1/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/v1/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 ]
+
+urlpatterns += swagger_url
