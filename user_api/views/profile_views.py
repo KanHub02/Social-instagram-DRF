@@ -26,6 +26,8 @@ from ..permissions import (
     CustomAuthenticatedPermission,
 )
 from ..pagination import UserProfilePagination, FollowersPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from ..service import UserFilter
 
 
 class UnFollowByView(generics.DestroyAPIView):
@@ -110,6 +112,10 @@ class ProfileViewSet(ReadOnlyModelViewSet):
         JWTAuthentication,
     ]
     pagination_class = UserProfilePagination
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    filterset_class = UserFilter
 
 
 class ProfileUpdateApiView(generics.UpdateAPIView):

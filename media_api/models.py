@@ -1,6 +1,7 @@
 from django.core.validators import RegexValidator
 from django.db import models
 from user_api.models import User
+from user_api.validators import tag_validator
 
 
 class Post(models.Model):
@@ -8,10 +9,12 @@ class Post(models.Model):
     image = models.ImageField(upload_to="media/uploaded_media/", blank=False)
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255, blank=True)
-    tag_validator = RegexValidator(r"^[@](\w+)$", "tag doesn't comply.")
     tag = models.CharField(max_length=255, validators=[tag_validator], blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return self.title
 
 
 class Comment(models.Model):
@@ -21,7 +24,7 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.post} commented by {self.author}"
 
 
@@ -30,7 +33,7 @@ class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="like")
     created_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.author} liked {self.post}"
 
 
