@@ -2,12 +2,12 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from views.auth_views import (
+from .views.auth_views import (
     UserRegisterApiView,
     LoginAPIView,
 )
 
-from views.profile_views import (
+from .views.profile_views import (
     ProfileViewSet,
     ProfileUpdateApiView,
     UserSetPrivateStatus,
@@ -15,6 +15,7 @@ from views.profile_views import (
     GetAllFollowers,
     GetToFollowView,
     UnFollowByView,
+    ToSavePostView,
 )
 
 
@@ -47,4 +48,5 @@ urlpatterns = [
         "profile/unfollow-from/<pk>/",
         UnFollowByView.as_view(),
     ),
+    path("post/<pk>/save/", ToSavePostView.as_view(), name="save_post_api"),
 ]

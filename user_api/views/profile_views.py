@@ -19,6 +19,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import FollowerSystem, User
+from media_api.models import Post
 
 from ..permissions import (
     UserProfilePermission,
@@ -30,7 +31,7 @@ class UnFollowByView(generics.DestroyAPIView):
 
     queryset = FollowerSystem.objects.all()
     serializer_class = UnFollowByCurrentUserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [UserProfilePermission,]
     authentication_classes = [JWTAuthentication]
 
     def destroy(self, request, pk):
@@ -46,6 +47,7 @@ class UnFollowByView(generics.DestroyAPIView):
 
 class GetToFollowView(views.APIView):
     serializer_class = FollowerSystemSerializer
+    permission_classes = [IsAuthenticated,]
     authentication_classes = [
         JWTAuthentication,
     ]
@@ -63,6 +65,7 @@ class GetToFollowView(views.APIView):
 
 class GetAllFollows(generics.ListAPIView):
     serializer_class = GetAllFollowsSerializer
+    permission_classes = [IsAuthenticated, ]
 
     # pagination_classes = CommentPagination
 
@@ -77,6 +80,7 @@ class GetAllFollows(generics.ListAPIView):
 
 class GetAllFollowers(generics.ListAPIView):
     serializer_class = GetAllFollowersSerializer
+    [IsAuthenticated, ]
 
     def get(self, request, pk):
         post = get_object_or_404(User, pk=pk)
@@ -110,3 +114,23 @@ class UserSetPrivateStatus(generics.UpdateAPIView):
     authentication_classes = [
         JWTAuthentication,
     ]
+
+
+class ToSavePostView(views.APIView):
+    serializer_class = []
+    permission_classes = [
+        IsAuthenticated,
+    ]
+    authentication_classes = [
+        JWTAuthentication,
+    ]
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save(saved_post=post)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

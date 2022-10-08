@@ -1,5 +1,5 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .models import Post, Like, Comment
+from .models import Post
 from rest_framework import permissions, viewsets, generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
