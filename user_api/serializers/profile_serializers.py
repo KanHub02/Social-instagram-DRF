@@ -6,6 +6,7 @@ from rest_framework import serializers
 from ..models import User, OnlineUserActivity, FollowerSystem
 from rest_framework import response
 from rest_framework import status
+from media_api.models import Post
 
 
 class UnFollowByCurrentUserSerializer(serializers.ModelSerializer):
@@ -46,6 +47,9 @@ class ProfileSerializer(serializers.ModelSerializer):
     followers_count = serializers.SerializerMethodField(
         method_name="get_followers_count", read_only=True
     )
+    posts_count = serializers.SerializerMethodField(
+        method_name="get_posts_count", read_only=True
+    )
     last_activity = UserActivitySerializer(read_only=True)
 
     class Meta:
@@ -61,6 +65,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "followers_count",
             "last_activity",
             "is_private",
+            "posts_count",
         ]
 
     def get_follows_count(self, obj):
@@ -68,6 +73,9 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_followers_count(self, obj):
         return FollowerSystem.objects.filter(user_from=obj).count()
+
+    def get_posts_count(self, obj):
+        return Post.objects.filter(author=obj).count()
 
 
 class PrivateStatusSerializer(serializers.ModelSerializer):

@@ -25,6 +25,7 @@ from ..permissions import (
     UserProfilePermission,
     CustomAuthenticatedPermission,
 )
+from ..pagination import UserProfilePagination, FollowersPagination
 
 
 class UnFollowByView(generics.DestroyAPIView):
@@ -72,6 +73,7 @@ class GetAllFollows(generics.ListAPIView):
     permission_classes = [
         IsAuthenticated,
     ]
+    pagination_class = FollowersPagination
 
     # pagination_classes = CommentPagination
 
@@ -89,6 +91,7 @@ class GetAllFollowers(generics.ListAPIView):
     [
         IsAuthenticated,
     ]
+    pagination_class = FollowersPagination
 
     def get(self, request, pk):
         post = get_object_or_404(User, pk=pk)
@@ -106,12 +109,13 @@ class ProfileViewSet(ReadOnlyModelViewSet):
     authentication_classes = [
         JWTAuthentication,
     ]
+    pagination_class = UserProfilePagination
 
 
 class ProfileUpdateApiView(generics.UpdateAPIView):
     serializer_class = ProfileSerializer
     queryset = User.objects.all()
-    permission_classes = [UserProfilePermission]
+    permission_classes = UserProfilePermission
     authentication_classes = [JWTAuthentication]
 
 

@@ -4,22 +4,21 @@ from rest_framework import permissions, viewsets, generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import PostSerializer, CommentSerializer, LikePostSerializer
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.shortcuts import get_object_or_404
 from .permissions import IfPostFromUserPermission
-
-
-# from .pagination import CommentPagination, PostPagination, LikePagination
+from .pagination import PostPagination, LikePaginatioin, CommentsPagination
 
 
 class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
-    permission_classes = [IfPostFromUserPermission]
+    permission_classes = IfPostFromUserPermission
     authentication_classes = [
         JWTAuthentication,
     ]
+    pagination_class = [PostPagination]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -27,8 +26,8 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class PostLikesApiView(APIView):
     serializer_class = LikePostSerializer
-
-    # pagination_classes = LikePagination
+    permission_classes = [IsAuthenticated]
+    pagination_class = LikePaginatioin
 
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
@@ -58,8 +57,8 @@ class AddLikePostView(generics.CreateAPIView):
 
 class PostCommentsApiView(APIView):
     serializer_class = CommentSerializer
-
-    # pagination_classes = CommentPagination
+    permission_classes = [IsAuthenticated]
+    pagination_class = CommentsPagination
 
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
