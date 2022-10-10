@@ -8,13 +8,8 @@ import random
 class Command(BaseCommand):
     help = "Create random Like to posts"
 
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "total", type=int, help="Indicates the number of users to be created"
-        )
-
     def handle(self, *args, **kwargs):
-        total = kwargs["total"]
+        total = 10
         for i in range(total):
             Like.objects.create(
                 author=random.choice(User.objects.all()),

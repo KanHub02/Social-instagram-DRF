@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./
+    container_name: social_net_drf
+    restart: always
+    command: bash entrypoint.sh
+    volumes:
+      - .:/usr/src/app
+      - ./static:/usr/src/app/static
+      - ./media:/usr/src/app/media
+    ports:
+      - 8888:8888
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:12
+    container_name: social_net_db
+    volumes:
+      - audio_library_postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+    ports:
+      - 5400:5400
+
+  nginx:
+    build: ./nginx
+    container_name: social_net_nginx
+    restart: on-failure
+    ports:
+      - 88:88
+    volumes:
+      - ./static:/static
+      - ./media:/media
+    depends_on:
+      - web
+
+volumes:
+  audio_library_postgres_data:
